@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -15,7 +16,9 @@ import java.util.*;
  * exceptions to align with the requirements of the BreedFetcher interface.
  */
 public class DogApiBreedFetcher implements BreedFetcher {
+    private static String apiUrl = "https://dog.ceo/api/breed/";
     private final OkHttpClient client = new OkHttpClient();
+
 
     /**
      * Fetch the list of sub breeds for the given breed from the dog.ceo API.
@@ -30,6 +33,35 @@ public class DogApiBreedFetcher implements BreedFetcher {
         //      to refer to the examples of using OkHttpClient from the last lab,
         //      as well as the code for parsing JSON responses.
         // return statement included so that the starter code can compile and run.
-        return new ArrayList<>();
+
+        apiUrl = apiUrl + breed + "/list";
+        final Request request = new Request.Builder().url(apiUrl).build();
+
+        try {
+            final Response response = client.newCall(request).execute();
+            final JSONObject responseBody = new JSONObject(response.body().string());
+
+            // gets the status of the call
+            String status = responseBody.getString("status");
+
+            // checks if its successful
+            if (status.equals("success")) {
+                // gets the array of the breeds
+                JSONArray breeds = responseBody.getJSONArray("message");
+                List<String> subBreeds = new ArrayList<>();
+
+                // adds the breeds into a list
+                for (int i = 0; i < breeds.length(); i++) {
+                    subBreeds.add(breeds.getString(i));
+                }
+
+                return subBreeds;
+            } else {
+                throw new BreedNotFoundException(breed);
+            }
+
+        } catch (IOException | JSONException event) {
+            throw new BreedNotFoundException(breed);
+        }
     }
 }
