@@ -24,12 +24,12 @@ public class CachingBreedFetcher implements BreedFetcher {
     }
 
     @Override
-    public List<String> getSubBreeds(String breed) {
+    public List<String> getSubBreeds(String breed) throws BreedFetcher.BreedNotFoundException{
         // checks if the map has the breed already
         if (cacheBreedMap.containsKey(breed)) {
             return cacheBreedMap.get(breed);
         } else {
-            // incements the cache call
+            // increments the cache call
             callsMade++;
             // gets the breed list
             List<String> subBreeds = fetcher.getSubBreeds(breed);
@@ -37,6 +37,7 @@ public class CachingBreedFetcher implements BreedFetcher {
             cacheBreedMap.put(breed, subBreeds);
             // returns the list
             return subBreeds;
+
         }
     }
 
