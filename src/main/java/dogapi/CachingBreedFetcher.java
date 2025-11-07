@@ -15,7 +15,7 @@ import java.util.*;
 public class CachingBreedFetcher implements BreedFetcher {
     private int callsMade = 0;
     private BreedFetcher fetcher;
-    private Map<String, List> cacheBreedMap = new HashMap<>();
+    private Map<String, List<String>> cacheBreedMap = new HashMap<>();
 
     public CachingBreedFetcher(BreedFetcher fetcher) {
         // assigns the fetcher
